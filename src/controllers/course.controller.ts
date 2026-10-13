@@ -18,9 +18,19 @@ export async function listCourses(_req: Request, res: Response, next: NextFuncti
 
 export async function getCourse(req: Request, res: Response, next: NextFunction) {
   try {
-    const id = parseId(req.params.id);
-    if (!id) { res.status(400).json({ message: "Invalid course id" }); return; }
+    const rawId = req.params.id;
 
+    if (typeof rawId !== "string") {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
+
+    const id = parseId(rawId);
+
+    if (!id) {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
     const course = await prisma.course.findUnique({
       where: { id },
       include: { _count: { select: { enrollments: true } } }
@@ -57,9 +67,19 @@ export async function createCourse(req: Request, res: Response, next: NextFuncti
 
 export async function updateCourse(req: Request, res: Response, next: NextFunction) {
   try {
-    const id = parseId(req.params.id);
-    if (!id) { res.status(400).json({ message: "Invalid course id" }); return; }
+    const rawId = req.params.id;
 
+    if (typeof rawId !== "string") {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
+
+    const id = parseId(rawId);
+
+    if (!id) {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
     const { title, description, capacity } = req.body as {
       title?: string; description?: string | null; capacity?: number;
     };
@@ -87,9 +107,19 @@ export async function updateCourse(req: Request, res: Response, next: NextFuncti
 
 export async function deleteCourse(req: Request, res: Response, next: NextFunction) {
   try {
-    const id = parseId(req.params.id);
-    if (!id) { res.status(400).json({ message: "Invalid course id" }); return; }
+    const rawId = req.params.id;
 
+    if (typeof rawId !== "string") {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
+
+    const id = parseId(rawId);
+
+    if (!id) {
+      res.status(400).json({ message: "Invalid course id" });
+      return;
+    }
     const existing = await prisma.course.findUnique({ where: { id } });
     if (!existing) { res.status(404).json({ message: "Course not found" }); return; }
 

@@ -8,9 +8,19 @@ function parseId(value: string): number | null {
 
 export async function enrollInCourse(req: Request, res: Response, next: NextFunction) {
   try {
-    const courseId = parseId(req.params.courseId);
-    if (!courseId) { res.status(400).json({ message: "Invalid course id" }); return; }
+    const rawCourseId = req.params.courseId;
 
+    if (typeof rawCourseId !== "string") {
+    res.status(400).json({ message: "Invalid course id" });
+    return;
+    }
+
+    const courseId = parseId(rawCourseId);
+
+    if (!courseId) {
+    res.status(400).json({ message: "Invalid course id" });
+    return;
+    }
     const course = await prisma.course.findUnique({
       where: { id: courseId },
       include: { _count: { select: { enrollments: true } } }
@@ -47,9 +57,19 @@ export async function myEnrollments(req: Request, res: Response, next: NextFunct
 
 export async function cancelEnrollment(req: Request, res: Response, next: NextFunction) {
   try {
-    const courseId = parseId(req.params.courseId);
-    if (!courseId) { res.status(400).json({ message: "Invalid course id" }); return; }
+    const rawCourseId = req.params.courseId;
 
+    if (typeof rawCourseId !== "string") {
+    res.status(400).json({ message: "Invalid course id" });
+    return;
+    }
+
+    const courseId = parseId(rawCourseId);
+
+    if (!courseId) {
+    res.status(400).json({ message: "Invalid course id" });
+    return;
+    }
     const enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId: req.auth!.userId, courseId } }
     });
